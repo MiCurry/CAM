@@ -40,7 +40,7 @@ use cam_abortutils,     only: endrun
 
 use mpas_timekeeping,   only : MPAS_TimeInterval_type
 
-use cam_mpas_subdriver, only: cam_mpas_global_sum_real
+use cam_mpas_subdriver, only: cam_mpas_global_sum
 
 implicit none
 private
@@ -1618,8 +1618,8 @@ subroutine set_dry_mass(dyn_in, target_avg_dry_surface_pressure)
 
    ! (3) compute average global dry surface pressure
    preliminary_dry_surface_pressure(1:nCellsSolve) =  preliminary_dry_surface_pressure(1:nCellsSolve)*areaCell(1:nCellsSolve)
-   sphere_surface_area = cam_mpas_global_sum_real(areaCell(1:nCellsSolve))
-   preliminary_avg_dry_surface_pressure = cam_mpas_global_sum_real(preliminary_dry_surface_pressure(1:nCellsSolve)) &
+   sphere_surface_area = cam_mpas_global_sum(areaCell(1:nCellsSolve))
+   preliminary_avg_dry_surface_pressure = cam_mpas_global_sum(preliminary_dry_surface_pressure(1:nCellsSolve)) &
                                                                    /sphere_surface_area
 
    if (masterproc) then
@@ -1640,7 +1640,7 @@ subroutine set_dry_mass(dyn_in, target_avg_dry_surface_pressure)
        end do
    end do
    preliminary_dry_surface_pressure(1:nCellsSolve) = preliminary_dry_surface_pressure(1:nCellsSolve)*areaCell(1:nCellsSolve)
-   scaled_avg_dry_surface_pressure = cam_mpas_global_sum_real(preliminary_dry_surface_pressure(1:nCellsSolve)) &
+   scaled_avg_dry_surface_pressure = cam_mpas_global_sum(preliminary_dry_surface_pressure(1:nCellsSolve)) &
                                                               / sphere_surface_area
 
    if (masterproc) then

@@ -33,7 +33,7 @@ module cam_mpas_subdriver
               cam_mpas_run, &
               cam_mpas_finalize, &
               cam_mpas_debug_stream, &
-              cam_mpas_global_sum_real
+              cam_mpas_global_sum
 
     public :: corelist, domain_ptr
 
@@ -54,6 +54,11 @@ module cam_mpas_subdriver
            integer(kind=shr_kind_in), intent(in), optional :: ierr
        end subroutine halt_model
     end interface
+
+    interface cam_mpas_global_sum
+       module procedure cam_mpas_global_sum_real
+       module procedure cam_mpas_global_sum_int
+    end interface cam_mpas_global_sum
 
 
 contains
@@ -2589,5 +2594,34 @@ contains
 
     end function cam_mpas_global_sum_real
 
+    !-----------------------------------------------------------------------
+    !  routine cam_mpas_global_sum_int
+    !
+    !> \brief  Compute the global sum of an integer array
+    !> \author Miles Curry
+    !> \date   25 February 2021
+    !> \details
+    !>  This routine computes a global sum of an integer array across all tasks
+    !> in a communicator and returns that sum to all tasks.
+    !>
+    !
+    !-----------------------------------------------------------------------
+    function cam_mpas_global_sum_int(iarray) result(global_sum)
+
+       use mpas_kind_types, only : RKIND
+       use mpas_dmpar, only : mpas_dmpar_sum_int
+
+       implicit none
+
+       ! Input variables
+       integer, dimension(:), intent(in) :: iarray
+       integer :: global_sum
+
+       integer :: local_sum
+
+       local_sum = sum(iarray)
+       call mpas_dmpar_sum_int(domain_ptr % dminfo, local_sum, global_sum)
+
+    end function cam_mpas_global_sum_int
 
 end module cam_mpas_subdriver
